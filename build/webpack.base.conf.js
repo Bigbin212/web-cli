@@ -11,7 +11,8 @@ function resolve (dir) {
 module.exports = {
 	context: path.resolve(__dirname, '../'),
 	entry: {
-		app: ['babel-polyfill', './src/main.js']
+		app01: ['babel-polyfill', './app01/main.js'],
+		main: ['babel-polyfill', './main/main.js']
 	},
 	output: {
 		path: config.build.assetsRoot,
@@ -24,8 +25,11 @@ module.exports = {
 		extensions: ['.js', '.vue', '.json'],
 		alias: {
 			'vue$': 'vue/dist/vue.esm.js',
-			'@': resolve('src'),
-			'static': path.resolve(__dirname, '../static')
+			'main': resolve('main'),
+			'app01': resolve('app01'),
+			'lang': resolve('lang'), // 语言包路径
+			'tool': resolve('utils'), // 自定义工具函数库
+			'static': path.resolve(__dirname, '../static') // 不参与打包文件路径
 		}
 	},
 	module: {
@@ -34,7 +38,7 @@ module.exports = {
 				test: /\.(js|vue)$/,
 				loader: 'eslint-loader',
 				enforce: 'pre',
-				include: [resolve('src'), resolve('test')],
+				include: [resolve('main'), resolve('app01'), resolve('test')],
 				options: {
 					formatter: require('eslint-friendly-formatter'),
 					emitWarning: !config.dev.showEslintErrorsInOverlay
@@ -48,7 +52,11 @@ module.exports = {
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
-				include: [resolve('src'), resolve('test')]
+				include: [resolve('main'), resolve('app01'), resolve('static'), resolve('lang'), resolve('test')]
+			},
+			{
+				test: /\.sass$/,
+				loaders: ['style', 'css', 'scss']
 			},
 			{
 				test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
